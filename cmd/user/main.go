@@ -10,7 +10,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func printAllUsers(pool *pgxpool.Pool) {
+func PrintAllUsers(pool *pgxpool.Pool) {
 	query := "select id, name, passhash from users limit 10;"
 
 	rows, err := pool.Query(context.Background(), query)
@@ -24,7 +24,7 @@ func printAllUsers(pool *pgxpool.Pool) {
 	}
 }
 
-func addUser(pool *pgxpool.Pool, name string, password []byte) {
+func AddUser(pool *pgxpool.Pool, name string, password []byte) {
 	query := "insert into users(name, passhash) values($1, $2);"
 
 	hash, err := bcrypt.GenerateFromPassword(password, 10)
@@ -35,7 +35,7 @@ func addUser(pool *pgxpool.Pool, name string, password []byte) {
 	if err != nil { log.Fatal("addUser Exec error. ", err) }
 }
 
-func removeUser(pool *pgxpool.Pool, id uint16) {
+func RemoveUser(pool *pgxpool.Pool, id uint16) {
 	query := "delete from users where id = $1;"
 
 	_, err := pool.Exec(context.Background(), query, id)
