@@ -13,8 +13,8 @@
     - [ ] Message
     - [ ] Room
 
-Day 1-2: Learning stuff.
-Day 3: Implement Repository pattern for multiple objects (allows switching databases & testing), basic http server routing.
+Day 1-2: Learning stuff.  
+Day 3: Implement Repository pattern for multiple objects (allows switching databases & testing), basic http server routing.  
 
 Resources so far:
 
