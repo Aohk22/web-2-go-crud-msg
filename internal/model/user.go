@@ -11,14 +11,15 @@ import (
 
 type User struct {
 	id uint16
-	name string
-	passhash string
+	Name string
+	Password []byte
 }
 
 type UserStore interface {
 	GetAllUsers() ([]User, error)
-	AddUser(string, []byte) (string, error)
-	RemoveUser(uint16) (string, error)
+	GetUser(id uint16) (User, error)
+	AddUser(name string, password []byte) (string, error)
+	RemoveUser(id uint16) (string, error)
 }
 
 // implementation
@@ -31,13 +32,14 @@ type PgUserStore struct {
 func (s *PgUserStore) GetAllUsers() ([]User, error) {
 	rows, err := s.Db.Query(s.Ctx, "select * from users;")
 	if err != nil { return nil, err }
+	defer rows.Close()
 
 	var users []User
 
 	for rows.Next() {
 		var u User
 
-		rows.Scan(&u.id, &u.name, &u.passhash)
+		rows.Scan(&u.id, &u.Name, &u.Password)
 		users = append(users, u)
 	}
 	if err := rows.Err(); err != nil {
@@ -45,6 +47,19 @@ func (s *PgUserStore) GetAllUsers() ([]User, error) {
 	}
 
 	return users, nil
+}
+
+func (s *PgUserStore) GetUser(id uint16) (User, error) {
+	rows, err := s.Db.Query(s.Ctx, "select * from users where id = $1", id)
+	if err != nil { return User{}, err }
+
+	var user User
+	
+	for rows.Next() {
+		rows.Scan(&user.id, &user.Name, &user.Password)
+		break // since id is unique, assume 1
+	}
+	return user, nil
 }
 
 func (m *PgUserStore) AddUser(name string, password []byte) (string, error) {
@@ -56,7 +71,7 @@ func (m *PgUserStore) AddUser(name string, password []byte) (string, error) {
 }
 
 func (m *PgUserStore) RemoveUser(id uint16) (string, error) {
-	tag, err := m.Db.Exec(m.Ctx, "delete from users where id = $1", id)
+	tag, err := m.Db.Exec(m.Ctx, "delete from users where id = $1;", id)
 	if err != nil { return "", err }
 	return tag.String(), nil
 }
