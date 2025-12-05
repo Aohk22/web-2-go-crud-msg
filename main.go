@@ -28,9 +28,12 @@ func run(ctx context.Context, logger *log.Logger) error {
 	if err != nil { return err }
 	defer dbPool.Close()
 
+	// init stores
 	userStore := &model.PgUserStore{ Ctx: ctx, Db: dbPool }
+	messageStore := &model.PgMessageStore{ Ctx: ctx, Db: dbPool }
+	roomStore := &model.PgRoomStore{ Ctx: ctx, Db: dbPool }
 
-	mux := srv.NewServer(logger, userStore)
+	mux := srv.NewServer(logger, userStore, messageStore, roomStore)
 
 	server := &http.Server{
 		Addr: ":8080",
