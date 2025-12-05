@@ -4,19 +4,33 @@
     - [x] Create User schema
     - [x] Create Message schema
     - [x] Create Room Schema
+    - [x] Room user junction table
 
 - [ ] Functions
     - [ ] Users
-        - [ ] login
-        - [ ] add (register)
-        - [x] get all
+        - [ ] Login
+        - [x] Add (register)
+            - [ ] Confirmation
+        - [x] Get all
     - [ ] Message
     - [ ] Room
 
-Day 1-2: Learning stuff.  
-Day 3: Implement Repository pattern for multiple objects (allows switching databases & testing), basic http server routing.  
+- [ ] Authentication
 
-Resources so far:
+**Business functions notes:**
+
+- User login, lookup, register
+- Chat room create, delete, join
+    - Search for users
+- Message get, send, delete for room.
+
+**Log:**
+
+Day 1-2: Learning stuff.  
+Day 3: Repository pattern for multiple objects (allows switching databases & testing), basic http server routing.  
+Day 4: Test strategy pattern, research api design.  
+
+**Resource:**
 
 - https://dev.to/santoshanand/implementing-the-repository-pattern-in-go-with-both-in-memory-and-mysql-repositories-581j
 - https://github.com/jorzel/go-repository-pattern
