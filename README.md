@@ -16,6 +16,9 @@
     - [ ] Room
 
 - [ ] Authentication
+- [ ] Websockets
+
+- [ ] Tests
 
 **Business functions notes:**
 
@@ -26,9 +29,9 @@
 
 **Log:**
 
-Day 1-2: Learning stuff.  
-Day 3: Repository pattern for multiple objects (allows switching databases & testing), basic http server routing.  
-Day 4: Test strategy pattern, research api design.  
+Learning stuff. 
+Repository pattern for multiple objects (allows switching databases & testing), basic http server routing.  
+Test strategy pattern, research api design, app infrastructure, ? how to join tables in repository patterns.  
 
 **Resource:**
 

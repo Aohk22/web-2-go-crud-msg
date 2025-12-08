@@ -9,12 +9,12 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Aohk22/web-2-go-crud-msg/internal/model"
 	"github.com/Aohk22/web-2-go-crud-msg/internal/srv"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
 )
+
 
 func run(ctx context.Context, logger *log.Logger) error {
 	// load envs
@@ -28,12 +28,8 @@ func run(ctx context.Context, logger *log.Logger) error {
 	if err != nil { return err }
 	defer dbPool.Close()
 
-	// init stores
-	userStore := &model.PgUserStore{ Ctx: ctx, Db: dbPool }
-	messageStore := &model.PgMessageStore{ Ctx: ctx, Db: dbPool }
-	roomStore := &model.PgRoomStore{ Ctx: ctx, Db: dbPool }
-
-	mux := srv.NewServer(logger, userStore, messageStore, roomStore)
+	// init app
+	mux := srv.NewServer(ctx, logger, dbPool)
 
 	server := &http.Server{
 		Addr: ":8080",
@@ -60,7 +56,7 @@ func run(ctx context.Context, logger *log.Logger) error {
 
 func main() {
 	ctx := context.Background()
-	logger := log.New(os.Stdout, "MyLoggER: ", log.Ldate)
+	logger := log.New(os.Stdout, "MyLogger: ", log.Ldate)
 
 	run(ctx, logger)
 }
