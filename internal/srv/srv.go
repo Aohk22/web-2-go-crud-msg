@@ -15,11 +15,11 @@ type Stores struct {
 	MessageStore model.MessageStore
 }
 
-func NewStores(ctx context.Context, db *pgxpool.Pool) (*Stores) {
+func NewStores(db *pgxpool.Pool) (*Stores) {
 	return &Stores{
-		UserStore: &model.PgUserStore { Ctx: ctx, Db: db },
-		RoomStore: &model.PgRoomStore { Ctx: ctx, Db: db },
-		MessageStore: &model.PgMessageStore { Ctx: ctx, Db: db },
+		UserStore: &model.PgUserStore { Db: db },
+		RoomStore: &model.PgRoomStore { Db: db },
+		MessageStore: &model.PgMessageStore { Db: db },
 	}
 }
 
@@ -27,9 +27,9 @@ func NewServer(ctx context.Context, logger *log.Logger, db *pgxpool.Pool) http.H
 	var handler http.Handler
 	var mux *http.ServeMux = http.NewServeMux()
 
-	stores := NewStores(ctx, db)
+	stores := NewStores(db)
 
-	addRoutes(mux, stores)
+	addRoutes(ctx, mux, stores)
 
 	// TODO: wrap the loggers and auth middleware
 	handler = loggerMiddleware(logger)(mux)

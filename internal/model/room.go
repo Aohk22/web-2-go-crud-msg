@@ -14,19 +14,18 @@ type Room struct {
 }
 
 type RoomStore interface {
-	GetRoom(id uint32) ([]Room, error)
-	GetAllRooms() ([]Room, error)
-	AddRoom(time, name string) (string, error)
-	DeleteRoom(id uint32) (string, error)
+	GetRoom(ctx context.Context, id uint32) (Room, error)
+	GetAllRooms(ctx context.Context) ([]Room, error)
+	AddRoom(ctx context.Context, time, name string) (string, error)
+	DeleteRoom(ctx context.Context, id uint32) (string, error)
 }
 
 type PgRoomStore struct {
-	Ctx context.Context
 	Db *pgxpool.Pool
 }
 
-func (store *PgRoomStore) GetAllRooms() ([]Room, error) {
-	rows, err := store.Db.Query(store.Ctx, "select * from rooms")
+func (store *PgRoomStore) GetAllRooms(ctx context.Context) ([]Room, error) {
+	rows, err := store.Db.Query(ctx, "select * from rooms")
 	if err != nil { return nil, err }
 	defer rows.Close()
 
@@ -42,9 +41,9 @@ func (store *PgRoomStore) GetAllRooms() ([]Room, error) {
 	return rooms, nil
 }
 
-func (store *PgRoomStore) GetRoom(id uint32) ([]Room, error) {
-	rows, err := store.Db.Query(store.Ctx, "select * from rooms where id = $1", id)
-	if err != nil { return nil, err }
+func (store *PgRoomStore) GetRoom(ctx context.Context, id uint32) (Room, error) {
+	rows, err := store.Db.Query(ctx, "select * from rooms where id = $1", id)
+	if err != nil { return Room{}, err }
 	defer rows.Close()
 
 	var rooms []Room
@@ -56,11 +55,11 @@ func (store *PgRoomStore) GetRoom(id uint32) ([]Room, error) {
 		rooms = append(rooms, room)
 	}
 
-	return rooms, nil
+	return rooms[0], nil
 }
 
-func (store *PgRoomStore) AddRoom(time, name string) (string, error) {
-	tag, err := store.Db.Exec(store.Ctx, 
+func (store *PgRoomStore) AddRoom(ctx context.Context, time, name string) (string, error) {
+	tag, err := store.Db.Exec(ctx, 
 		"insert into rooms (time, name) " + 
 		"values ($1, $2)",
 		time, name,
@@ -69,8 +68,9 @@ func (store *PgRoomStore) AddRoom(time, name string) (string, error) {
 	return tag.String(), nil
 }
 
-func (store *PgRoomStore) DeleteRoom(id uint32) (string, error) {
-	tag, err := store.Db.Exec(store.Ctx,
+func (store *PgRoomStore) DeleteRoom(ctx context.Context, id uint32) (string, error) {
+	tag, err := store.Db.Exec(
+		ctx,
 		"delete from rooms " +
 		"where id = $1", id,
 	)

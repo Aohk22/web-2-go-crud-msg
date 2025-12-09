@@ -2,7 +2,6 @@ package model
 
 import (
 	"context"
-	"log"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -17,13 +16,12 @@ type Message struct {
 }
 
 type MessageStore interface {
-	GetMessage(strat GetMessageStrategy) ([]Message, error)
-	AddMessage(time, content string, userId, roomId uint32) (string, error)
-	DeleteMessage(id uint32) (string, error)
+	GetMessage(ctx context.Context, strat GetMessageStrategy) ([]Message, error)
+	AddMessage(ctx context.Context, time, content string, userId, roomId uint32) (string, error)
+	DeleteMessage(ctx context.Context, id uint32) (string, error)
 }
 
 type PgMessageStore struct {
-	Ctx context.Context
 	Db *pgxpool.Pool
 }
 
@@ -33,6 +31,7 @@ type GetMessageStrategy interface {
 	MakeQuery() (string , []any)
 }
 
+// better off using inline functions probably.
 type GetMessageByRoomUser struct {
 	userId, roomId uint32
 }
@@ -57,9 +56,9 @@ func (strat *GetMessageByRoom) MakeQuery() (string, []any) {
 	return "select * from messages where room_id = $1", []any{strat.RoomId}
 }
 
-func (store *PgMessageStore) GetMessage(msgStrat GetMessageStrategy) ([]Message, error) {
+func (store *PgMessageStore) GetMessage(ctx context.Context, msgStrat GetMessageStrategy) ([]Message, error) {
 	query, args := msgStrat.MakeQuery()
-	rows, err := store.Db.Query(store.Ctx, query, args...)
+	rows, err := store.Db.Query(ctx, query, args...)
 	if err != nil { return nil, err }
 	defer rows.Close()
 
@@ -68,7 +67,6 @@ func (store *PgMessageStore) GetMessage(msgStrat GetMessageStrategy) ([]Message,
 	for rows.Next() {
 		var msg Message
 		rows.Scan(&msg.Id, &msg.Time, &msg.Content, &msg.UserId, &msg.RoomId)
-		log.Println(msg)
 		msgs = append(msgs, msg)
 	}
 
@@ -77,8 +75,9 @@ func (store *PgMessageStore) GetMessage(msgStrat GetMessageStrategy) ([]Message,
 
 // other functions
 
-func (store *PgMessageStore) AddMessage(time, content string, userId, roomId uint32) (string, error) {
-	tag, err := store.Db.Exec(store.Ctx,
+func (store *PgMessageStore) AddMessage(ctx context.Context, time, content string, userId, roomId uint32) (string, error) {
+	tag, err := store.Db.Exec(
+		ctx,
 		"insert into message (time, content, user_id, room_id) " +
 		"values ($1, $2, $3, $4)",
 		time, content, userId, roomId,
@@ -87,8 +86,9 @@ func (store *PgMessageStore) AddMessage(time, content string, userId, roomId uin
 	return tag.String(), nil
 }
 
-func (store *PgMessageStore) DeleteMessage(id uint32) (string, error) {
-	tag, err := store.Db.Exec(store.Ctx, 
+func (store *PgMessageStore) DeleteMessage(ctx context.Context, id uint32) (string, error) {
+	tag, err := store.Db.Exec(
+		ctx, 
 		"delete from messages " +
 		"where id = $1",
 		id,

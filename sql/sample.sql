@@ -39,7 +39,7 @@ INSERT INTO messages (time, content, user_id, room_id) VALUES
 ('2025-11-25 09:12:22+00', 'Can someone help me with a PostgreSQL query? I keep getting "relation does not exist"', 2, 3),
 ('2025-11-25 09:14:08+00', 'Did you forget to set the search_path or quote the table name?', 3, 3),
 ('2025-11-25 09:16:55+00', 'It might be a case-sensitivity issue. Try "MyTable" with quotes', 5, 3),
-('2025-12-01 11:26:40+00', 'Alright team, sprint starts today. Let’s crush it! 🚀', 1, 5),
+('2025-12-01 11:26:40+00', 'Alright team, sprint starts today. Let''s crush it! 🚀', 1, 5),
 ('2025-12-01 11:28:15+00', 'Ready when you are. Backend API is deployed.', 2, 5),
 ('2025-12-01 11:29:02+00', 'Frontend build is passing, just fixing some styling bugs', 4, 5),
-('2025-12-02 08:15:33+00', 'Good morning! Who’s doing standup first?', 1, 5);
+('2025-12-02 08:15:33+00', 'Good morning! Who''s doing standup first?', 1, 5);

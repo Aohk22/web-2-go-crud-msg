@@ -10,26 +10,27 @@ import (
 type User struct {
 	Id uint32
 	Name string
-	Password []byte
+	Password string
 }
 
 type UserStore interface {
-	GetAllUsers() ([]User, error)
-	GetUser(id uint32) (User, error)
-	GetUsersByRoom(roomId uint32) ([]User, error)
-	AddUser(name string, password []byte) (string, error)
-	RemoveUser(id uint32) (string, error)
+	GetAllUsers(ctx context.Context) ([]User, error)
+
+	GetUser(ctx context.Context, id uint32) (User, error)
+	GetUsersByRoom(ctx context.Context, roomId uint32) ([]User, error)
+
+	AddUser(ctx context.Context, name string, password string) (string, error)
+	RemoveUser(ctx context.Context, id uint32) (string, error)
 }
 
 // implementation
 
 type PgUserStore struct {
-	Ctx context.Context
 	Db *pgxpool.Pool
 }
 
-func (s *PgUserStore) GetAllUsers() ([]User, error) {
-	rows, err := s.Db.Query(s.Ctx, "select * from users;")
+func (s *PgUserStore) GetAllUsers(ctx context.Context) ([]User, error) {
+	rows, err := s.Db.Query(ctx, "select * from users;")
 	if err != nil { return nil, err }
 	defer rows.Close()
 
@@ -48,8 +49,8 @@ func (s *PgUserStore) GetAllUsers() ([]User, error) {
 	return users, nil
 }
 
-func (s *PgUserStore) GetUser(id uint32) (User, error) {
-	rows, err := s.Db.Query(s.Ctx, "select * from users where id = $1", id)
+func (s *PgUserStore) GetUser(ctx context.Context, id uint32) (User, error) {
+	rows, err := s.Db.Query(ctx, "select * from users where id = $1", id)
 	if err != nil { return User{}, err }
 	defer rows.Close()
 
@@ -62,9 +63,9 @@ func (s *PgUserStore) GetUser(id uint32) (User, error) {
 	return user, nil
 }
 
-func (s *PgUserStore) GetUsersByRoom(roomId uint32) ([]User, error) {
+func (s *PgUserStore) GetUsersByRoom(ctx context.Context, roomId uint32) ([]User, error) {
 	rows, err := s.Db.Query(
-		s.Ctx,
+		ctx,
 		`select u.id, u.name, u.passhash
 		from rooms r
 		join user_room_join ur on r.id = ur.room_id
@@ -88,16 +89,16 @@ func (s *PgUserStore) GetUsersByRoom(roomId uint32) ([]User, error) {
 	return users, nil
 }
 
-func (m *PgUserStore) AddUser(name string, password []byte) (string, error) {
-	passhash, err := bcrypt.GenerateFromPassword(password, 10)
+func (m *PgUserStore) AddUser(ctx context.Context, name string, password string) (string, error) {
+	passhash, err := bcrypt.GenerateFromPassword([]byte(password), 10)
 	if err != nil { return "", err }
-	tag, err := m.Db.Exec(m.Ctx, "insert into users (name, passhash) values ($1, $2);", name, passhash)
+	tag, err := m.Db.Exec(ctx, "insert into users (name, passhash) values ($1, $2);", name, passhash)
 	if err != nil { return "", err }
 	return tag.String(), nil
 }
 
-func (m *PgUserStore) RemoveUser(id uint32) (string, error) {
-	tag, err := m.Db.Exec(m.Ctx, "delete from users where id = $1;", id)
+func (m *PgUserStore) RemoveUser(ctx context.Context, id uint32) (string, error) {
+	tag, err := m.Db.Exec(ctx, "delete from users where id = $1;", id)
 	if err != nil { return "", err }
 	return tag.String(), nil
 }

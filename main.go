@@ -31,7 +31,7 @@ func run(ctx context.Context, logger *log.Logger) error {
 	// init app
 	mux := srv.NewServer(ctx, logger, dbPool)
 
-	server := &http.Server{
+	server := &http.Server {
 		Addr: ":8080",
 		Handler: mux,
 	}
@@ -58,6 +58,7 @@ func main() {
 	ctx := context.Background()
 	logger := log.New(os.Stdout, "MyLogger: ", log.Ldate)
 
-	run(ctx, logger)
+	err := run(ctx, logger)
+	if err != nil { logger.Println(err) }
 }
 
