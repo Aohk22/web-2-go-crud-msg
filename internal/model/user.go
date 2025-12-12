@@ -2,6 +2,7 @@ package model
 
 import (
 	"context"
+	"log"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"golang.org/x/crypto/bcrypt"
@@ -21,6 +22,8 @@ type UserStore interface {
 
 	AddUser(ctx context.Context, name string, password string) (string, error)
 	RemoveUser(ctx context.Context, id uint32) (string, error)
+
+	CheckUser(ctx context.Context, name string, password string) (bool, error)
 }
 
 // implementation
@@ -101,4 +104,25 @@ func (m *PgUserStore) RemoveUser(ctx context.Context, id uint32) (string, error)
 	tag, err := m.Db.Exec(ctx, "delete from users where id = $1;", id)
 	if err != nil { return "", err }
 	return tag.String(), nil
+}
+
+func (m *PgUserStore) CheckUser(ctx context.Context, name string, password string) (bool, error) {
+	rows, err := m.Db.Query(ctx, "select passhash from users where name = $1", name)
+	if err != nil { return false, err }
+	defer rows.Close()
+
+	var user User
+
+	rows.Next()
+	err = rows.Scan(&user.Password)
+	if err != nil { return false, err }
+
+	log.Println(user.Password, password)
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+	log.Println(err)
+	if err == nil {
+		return true, nil
+	} else {
+		return false, err 
+	}
 }

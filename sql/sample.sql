@@ -1,11 +1,16 @@
 -- ai generated sample data
 -- Users
 INSERT INTO users (name, passhash) VALUES
-('Alice', '$2b$12$Kixh5eX5z3fZ8jQ9vN7m5O8pL9kJ7hG5fD3sA1bC9xE7vT5rW2qU6'),  -- password: alice123
-('Bob', '$2b$12$LmN7pQ8rT2vX5yZ9aB3cD5fH7jK9mP1qS3tU5wY8zA2cE4gI6kM8o'),    -- password: bobsecure
-('Charlie', '$2b$12$XyZ9aB3cD5fH7jK9mP1qS3tU5wY8zA2cE4gI6kM8oP0qR2sT4uV6wX8'), -- password: charlie!
-('Diana', '$2b$12$AbC3dE5fG7hI9jK1mN3oP5qR7sT9uV1wX3yZ5aB7cD9eF1gH3iJ5k'),   -- password: diana2025
-('Eve', '$2b$12$QwE4rT6yU8iO0pA2sD4fG6hJ8kL0mN2oP4qS6tU8vW0xY2zA4bC6dE8f'); -- password: eve_hacker
+("Alice"  ,  "$2a$10$kVde2ggYcmJTe/HUy/EZoObZWFzo3e94mBBv5bmtaFXY4/ph/AgI2"),
+("Bob"     , "$2a$10$r6E3Xw/8Er1TBs2SUW7u3eYyK9WG0peK1E6Bjf0Bu54eGM.W8P5eO"),
+("Charlie" , "$2a$10$Ab.SFh0FxEbWfNeseZRjiOgum8nFasnQPQKOMsL.yvwyok6u9zPhu"),
+("Diana"   , "$2a$10$AH6qAOCdJPs.2ZyEdlH8Iu2Ci8IiSb0L7EQIUMYoXwm0zQ8YcQqfa"),
+("Eve"     , "$2a$10$zpMA6OkDEKlF24ZlKKlsS.gwgfdnnC5SJx22CA6IvYxUeaXr5NySu");
+-- password: alice123
+-- password: bobsecure
+-- password: charlie!
+-- password: diana2025
+-- assword: eve_hacker
 
 -- Rooms
 INSERT INTO rooms (time, name) VALUES

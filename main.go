@@ -29,7 +29,8 @@ func run(ctx context.Context, logger *log.Logger) error {
 	defer dbPool.Close()
 
 	// init app
-	mux := srv.NewServer(ctx, logger, dbPool)
+	mux, err := srv.NewServer(ctx, logger, dbPool)
+	if err != nil { return err }
 
 	server := &http.Server {
 		Addr: ":8080",

@@ -7,16 +7,18 @@
     - [x] Room user junction table
 
 - [ ] Functions
-    - [ ] Users
-        - [ ] Login
+    - [ ] Users (get all)
+        - [ ] Login (JWT implementation)
         - [x] Add (register)
             - [ ] Confirmation
-        - [x] Get all
-    - [ ] Message
-    - [ ] Room
+    - [x] Message (get by room id, user id)
+    - [x] Room (get by id, all)
 
-- [ ] Authentication
+- [x] Authentication (JWT)
+
 - [ ] Websockets
+
+- [ ] Web interface
 
 - [ ] Tests
 
@@ -32,6 +34,7 @@
 Learning stuff. 
 Repository pattern for multiple objects (allows switching databases & testing), basic http server routing.  
 Test strategy pattern, research api design, app infrastructure, ? how to join tables in repository patterns.  
+12/12: Implement auth.
 
 **Resource:**
 
@@ -40,3 +43,6 @@ Test strategy pattern, research api design, app infrastructure, ? how to join ta
 - https://www.alexedwards.net/blog/organising-database-access (\*)
 - https://www.alexedwards.net/blog/making-and-using-middleware (\*)
 - https://grafana.com/blog/2024/02/09/how-i-write-http-services-in-go-after-13-years/#the-newserver-constructor (\*)
+
+- https://www.jetbrains.com/guide/go/tutorials/authentication-for-go-apps/auth/
+- https://github.com/golang-jwt/jwt
