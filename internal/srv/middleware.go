@@ -11,6 +11,7 @@ import (
 func loggerMiddleware(logger *log.Logger, next http.Handler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		logger.Printf("%v %v\n", r.Method, r.URL)
+		logger.Printf("%v\n", r.Header)
 
 		next.ServeHTTP(w, r)
 	}

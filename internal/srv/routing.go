@@ -135,7 +135,7 @@ func handleRoomGet(ctx context.Context, roomStore model.RoomStore) http.HandlerF
 		if err != nil { http.Error(w, "cant convert id in param", 500); return }
 
 		room, err := roomStore.GetRoom(ctx, uint32(id))
-		if err != nil { http.Error(w, "can get room", 500); return }
+		if err != nil { http.Error(w, "cant get room", 500); return }
 
 		json, err := json.Marshal(room)
 		if err != nil { http.Error(w, "cant convert json", 500); return }
