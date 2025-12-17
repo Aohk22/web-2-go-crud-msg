@@ -2,6 +2,7 @@ package model
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -53,6 +54,10 @@ func (store *PgRoomStore) GetRoom(ctx context.Context, id uint32) (Room, error) 
 
 		rows.Scan(&room.Id, &room.Time, &room.Name)
 		rooms = append(rooms, room)
+	}
+	
+	if len(rooms) == 0 || rooms == nil {
+		return Room{}, errors.New("no value from query");
 	}
 
 	return rooms[0], nil
