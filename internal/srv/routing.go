@@ -89,14 +89,13 @@ func handleLogin(ctx context.Context, userStore model.UserStore) http.HandlerFun
 		defer r.Body.Close()
 
 		creds := struct {
-			Name string `json:"name"`
+			Name string `json:"username"`
 			Password string `json:"password"`
 		}{}
 
 		err = json.Unmarshal(content, &creds)
 		if err != nil { http.Error(w, "unmarshal error", 500); return }
 
-		fmt.Println(creds.Name, creds.Password)
 		valid, err := userStore.CheckUser(ctx, creds.Name, creds.Password)
 		if err != nil { http.Error(w, "checkuser error", 500); return }
 		if !valid { 

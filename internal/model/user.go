@@ -2,7 +2,6 @@ package model
 
 import (
 	"context"
-	"log"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"golang.org/x/crypto/bcrypt"
@@ -117,9 +116,7 @@ func (m *PgUserStore) CheckUser(ctx context.Context, name string, password strin
 	err = rows.Scan(&user.Password)
 	if err != nil { return false, err }
 
-	log.Println(user.Password, password)
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
-	log.Println(err)
 	if err == nil {
 		return true, nil
 	} else {

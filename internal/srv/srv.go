@@ -42,6 +42,7 @@ func NewServer(ctx context.Context, logger *log.Logger, db *pgxpool.Pool) (http.
 	addRoutes(ctx, mux, stores)
 
 	handler = authMiddleware(mux)
+	handler = corsMiddleware(handler)
 	handler = loggerMiddleware(logger, handler)
 
 	return handler, nil
