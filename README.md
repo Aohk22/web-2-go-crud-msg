@@ -6,9 +6,9 @@
     - [x] Create Room Schema
     - [x] Room user junction table
 
-- [ ] Functions
+- [ ] API
     - [ ] Users (get all)
-        - [ ] Login (JWT implementation)
+        - [x] Login (JWT implementation)
         - [x] Add (register)
             - [ ] Confirmation
     - [x] Message (get by room id, user id)
@@ -19,6 +19,7 @@
 - [ ] Websockets
 
 - [ ] Web interface
+    - [ ] Login, JWT storage
 
 - [ ] Tests
 
@@ -35,6 +36,7 @@ Learning stuff.
 Repository pattern for multiple objects (allows switching databases & testing), basic http server routing.  
 Test strategy pattern, research api design, app infrastructure, ? how to join tables in repository patterns.  
 12/12: Implement auth.
+16/12: Test nextjs, react. Now using vite + react, testing jwt storage on browser, request cross origin using cors header.
 
 **Resource:**
 
@@ -46,3 +48,7 @@ Test strategy pattern, research api design, app infrastructure, ? how to join ta
 
 - https://www.jetbrains.com/guide/go/tutorials/authentication-for-go-apps/auth/
 - https://github.com/golang-jwt/jwt
+- https://permify.co/post/jwt-authentication-go/ (\*)
+
+- https://stackoverflow.com/questions/35553500/xmlhttprequest-cannot-load-xxx-no-access-control-allow-origin-header (\*)
+- https://www.descope.com/blog/post/developer-guide-jwt-storage
