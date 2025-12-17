@@ -1,7 +1,7 @@
 import z from 'zod';
 import './Styles.css'
 import { checkJwt } from '../lib/utils.ts'
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 const FormInput = z.object({
 	username: z.string(),
@@ -9,6 +9,8 @@ const FormInput = z.object({
 })
 
 export default function Login() {
+	const navigate = useNavigate();
+
 	async function login(formData: FormData) {
 		'use server';
 		const details = FormInput.parse({
@@ -17,13 +19,19 @@ export default function Login() {
 		});
 	
 		const res = await fetch(`${import.meta.env.VITE_API_URL}/login`, {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify(details),
 		});
 
+		if (!res.ok) {
+			console.log('login failed');
+			return;
+		}
+
 		const jwt = await res.text();
 		localStorage.setItem('jwtToken', jwt);
+		navigate('/');
 	}
 	
 	if (checkJwt()) {
