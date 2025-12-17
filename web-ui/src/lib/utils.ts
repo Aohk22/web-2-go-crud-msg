@@ -10,10 +10,15 @@ function parseJwt(token: string) {
 export function checkJwt(): boolean {
 	const token = localStorage.getItem('jwtToken');
 	if (token === null) {
-		return false
+		return false;
 	}
-	const jwtJson = parseJwt(token);
-	const expireTime = jwtJson.exp * 1000;
-	var d = new Date();
-	return (d.getTime() < expireTime);
+	try {
+		const jwtJson = parseJwt(token);
+		const expireTime = jwtJson.exp * 1000;
+		var d = new Date();
+		return (d.getTime() < expireTime);
+	} catch {
+		console.log('could not parse jawt token');
+		return false;
+	}
 }

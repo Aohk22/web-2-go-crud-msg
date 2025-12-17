@@ -1,9 +1,11 @@
 body {
-	display: block;
+	display: flex;
+	justify-content: center;
 }
 
 #root {
-	display: block;
+	position: relative;
+	display: flex;
 	width: 100%;
-	height: 100%;
+	justify-content: center;
 }
