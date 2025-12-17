@@ -7,7 +7,7 @@
     - [x] Room user junction table
 
 - [ ] API
-    - [ ] Users (get all)
+    - [x] Users (get all)
         - [x] Login (JWT implementation)
         - [x] Add (register)
             - [ ] Confirmation
@@ -19,7 +19,10 @@
 - [ ] Websockets
 
 - [ ] Web interface
-    - [ ] Login, JWT storage
+    - [x] Login, JWT storage
+    - [ ] Home page
+    - [ ] Room page
+        - [ ] Error handling
 
 - [ ] Tests
 
@@ -37,6 +40,7 @@ Repository pattern for multiple objects (allows switching databases & testing), 
 Test strategy pattern, research api design, app infrastructure, ? how to join tables in repository patterns.  
 12/12: Implement auth.
 16/12: Test nextjs, react. Now using vite + react, testing jwt storage on browser, request cross origin using cors header.
+17/12: Practice useEffect.
 
 **Resource:**
 
