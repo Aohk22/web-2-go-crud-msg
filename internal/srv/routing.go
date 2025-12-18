@@ -98,11 +98,14 @@ func handleLogin(ctx context.Context, userStore model.UserStore) http.HandlerFun
 
 		valid, err := userStore.CheckUser(ctx, creds.Name, creds.Password)
 		if err != nil { http.Error(w, "checkuser error", 500); return }
+		user, err := userStore.GetUserId(ctx, creds.Name)
+		if err != nil { http.Error(w, "get user id error", 500); return }
+		userIdStr := strconv.Itoa(int(user.Id))
 		if !valid { 
 			http.Error(w, "invalid user", 401) 
 			return
 		} else {
-			tokenString, err := createToken(creds.Name)
+			tokenString, err := createToken(creds.Name, userIdStr)
 			if err != nil { http.Error(w, "could not create jwt", 500); return }
 			fmt.Fprintf(w, "%s", tokenString)
 		}

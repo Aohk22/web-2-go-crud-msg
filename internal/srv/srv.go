@@ -48,9 +48,10 @@ func NewServer(ctx context.Context, logger *log.Logger, db *pgxpool.Pool) (http.
 	return handler, nil
 }
 
-func createToken(username string) (string, error) {
+func createToken(username string, uid string) (string, error) {
 	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"sub": username, // name
+		"uid": uid, // uid
 		"iss": "msgapp", // issuer
 		"exp": time.Now().Add(time.Hour).Unix(), // expiry
 		"iat": time.Now().Unix(), // issued at

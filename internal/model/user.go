@@ -17,6 +17,7 @@ type UserStore interface {
 	GetAllUsers(ctx context.Context) ([]User, error)
 
 	GetUser(ctx context.Context, id uint32) (User, error)
+	GetUserId(ctx context.Context, name string) (User, error)
 	GetUsersByRoom(ctx context.Context, roomId uint32) ([]User, error)
 
 	AddUser(ctx context.Context, name string, password string) (string, error)
@@ -62,6 +63,21 @@ func (s *PgUserStore) GetUser(ctx context.Context, id uint32) (User, error) {
 		rows.Scan(&user.Id, &user.Name, &user.Password)
 		break // since id is unique, assume 1
 	}
+	return user, nil
+}
+
+func (s *PgUserStore) GetUserId(ctx context.Context, name string) (User, error) {
+	rows, err := s.Db.Query(ctx, "select * from users where name = $1 ", name)
+	if err != nil { return User{}, err }
+	defer rows.Close()
+
+	var user User
+
+	for rows.Next() {
+		rows.Scan(&user.Id, &user.Name, &user.Password)
+		break
+	}
+
 	return user, nil
 }
 
