@@ -12,7 +12,9 @@
         - [x] Add (register)
             - [ ] Confirmation
     - [x] Message (get by room id, user id)
+        - Send message by user id and room
     - [x] Room (get by id, all)
+        - Create room
 
 - [x] Authentication (JWT)
 
@@ -20,6 +22,7 @@
 
 - [ ] Web interface
     - [x] Login, JWT storage
+        - Register
     - [ ] Home page
     - [ ] Room page
         - [ ] Error handling

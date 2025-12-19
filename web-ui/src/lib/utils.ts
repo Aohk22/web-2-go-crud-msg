@@ -9,7 +9,7 @@ function parseJwt(token: string) {
 	return JSON.parse(jsonPayload);
 }
 
-export function checkJwt(): boolean {
+export function checkLogin(): boolean {
 	const token = localStorage.getItem('jwtToken');
 	if (token === null) {
 		return false;

@@ -1,21 +1,24 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
 import { Login, Logout, Home, Room } from './routes';
-import { checkJwt } from './lib/utils.ts';
-import { useState } from 'react';
+import { checkLogin } from './lib/utils.ts';
 import './routes/Styles.css'
+import type { JSX } from 'react';
+
+function RequireAuth({ children } : { children: JSX.Element }) {
+	return checkLogin() ? children : <Navigate to='/login' replace />;
+}
 
 export default function App() {
-	const [loggedIn, setLoggedIn] = useState(checkJwt());
 	return (
 		<BrowserRouter>
 		<Routes>
-			<Route path='/login' element={<Login onLogin={()=>setLoggedIn(true)} />} /> 
-			<Route path='/logout' element={<Logout onLogout={()=>setLoggedIn(false)} />} />
+			<Route path='/login' element={<Login />} /> 
+			<Route path='/logout' element={<Logout />} />
 			<Route path='/' element={
-				loggedIn ? <Home /> : <Navigate to='/login' replace />
+				<RequireAuth children={<Home />} />
 			} />
 			<Route path='/room/:id' element={
-				loggedIn ? <Room /> : <Navigate to='/login' replace />
+				<RequireAuth children={<Room />} />
 			} />
 			<Route path='*' element={<Navigate to='/' replace />} />
 		</Routes>
