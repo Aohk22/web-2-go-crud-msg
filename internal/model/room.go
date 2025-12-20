@@ -18,6 +18,7 @@ type RoomStore interface {
 	GetRoom(ctx context.Context, id uint32) (Room, error)
 	GetAllRooms(ctx context.Context) ([]Room, error)
 	AddRoom(ctx context.Context, time, name string) (string, error)
+	AddRoomUser(ctx context.Context, time string, rid, uid uint32) (string, error)
 	DeleteRoom(ctx context.Context, id uint32) (string, error)
 }
 
@@ -68,6 +69,17 @@ func (store *PgRoomStore) AddRoom(ctx context.Context, time, name string) (strin
 		"insert into rooms (time, name) " + 
 		"values ($1, $2)",
 		time, name,
+	)
+	if err != nil { return "", err }
+	return tag.String(), nil
+}
+
+func (store *PgRoomStore) AddRoomUser(ctx context.Context, time string, rid, uid uint32) (string, error) {
+	tag, err := store.Db.Exec(
+		ctx,
+		"insert into user_room_join (time, user_id, room_id) " +
+		"values ($1, $2, $3)",
+		time, uid, rid,
 	)
 	if err != nil { return "", err }
 	return tag.String(), nil
