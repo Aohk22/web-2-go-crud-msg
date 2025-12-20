@@ -12,20 +12,25 @@
         - [x] Add (register)
             - [ ] Confirmation
     - [x] Message (get by room id, user id)
-        - Send message by user id and room
+        - [x] Send message by user id and room
+        - [ ] Delete message
     - [x] Room (get by id, all)
         - Create room
 
 - [x] Authentication (JWT)
 
-- [ ] Websockets
+- [ ] Websockets to check online state
 
 - [ ] Web interface
     - [x] Login, JWT storage
-        - Register
+        - [ ] Register
+        - [ ] User based room access
     - [ ] Home page
     - [ ] Room page
         - [ ] Error handling
+        - [x] Message refresh on send
+        - [ ] Limit amount of messages to render
+            - [ ] Control messages array using state
 
 - [ ] Tests
 
