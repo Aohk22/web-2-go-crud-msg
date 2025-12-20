@@ -78,7 +78,7 @@ func (store *PgMessageStore) GetMessage(ctx context.Context, msgStrat GetMessage
 func (store *PgMessageStore) AddMessage(ctx context.Context, time, content string, userId, roomId uint32) (string, error) {
 	tag, err := store.Db.Exec(
 		ctx,
-		"insert into message (time, content, user_id, room_id) " +
+		"insert into messages (time, content, user_id, room_id) " +
 		"values ($1, $2, $3, $4)",
 		time, content, userId, roomId,
 	)
