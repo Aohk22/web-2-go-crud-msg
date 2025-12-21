@@ -24,11 +24,10 @@
 - [ ] Web interface
     - [x] Login, JWT storage
         - [ ] Register
-        - [ ] User based room access
-    - [ ] Home page
+        - [ ] Room access permissions
+    - [x] Home page (just render rooms to table)
     - [ ] Room page
-        - [ ] Error handling
-        - [x] Message refresh on send
+        - [ ] Message refresh on send
         - [ ] Limit amount of messages to render
             - [ ] Control messages array using state
 
@@ -43,12 +42,14 @@
 
 **Log:**
 
-Learning stuff. 
-Repository pattern for multiple objects (allows switching databases & testing), basic http server routing.  
-Test strategy pattern, research api design, app infrastructure, ? how to join tables in repository patterns.  
-12/12: Implement auth.
-16/12: Test nextjs, react. Now using vite + react, testing jwt storage on browser, request cross origin using cors header.
-17/12: Practice useEffect.
+- Learning stuff. 
+- Repository pattern for multiple objects (allows switching databases & testing), basic http server routing.  
+- Test strategy pattern, research api design, app infrastructure, ? how to join tables in repository patterns.  
+- 12/12: Implement auth.
+- 16/12: Test nextjs, react. Now using vite + react, testing jwt storage on browser, request cross origin using cors header.
+- 17/12: Practice useEffect.
+- ~20/12: still improving ui, adding functions, restructuring code.
+- 21/12: failed to implement message update, need to look into **websockets** for real time update.
 
 **Resource:**
 
