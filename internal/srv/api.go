@@ -12,6 +12,15 @@ import (
 	"github.com/Aohk22/web-2-go-crud-msg/internal/model"
 )
 
+type RoomRequestData struct {
+	DataType string `json:"dataType"`
+	Data struct {
+		Content string `json:"content"`
+		Rid string `json:"rid"`
+		Uid string `json:"uid"`
+	} `json:"data"`
+}
+
 func getUser(ctx context.Context, userStore model.UserStore) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		idStr := r.PathValue("id")
@@ -157,10 +166,13 @@ func getRoomMessages(ctx context.Context, messageStore model.MessageStore) http.
 	return func(w http.ResponseWriter, r *http.Request) {
 		roomIdStr := r.PathValue("id")
 		roomIdInt, err := strconv.ParseInt(roomIdStr, 10, 16)
+		if err != nil { http.Error(w, "cant parse int", 500); return }
 
-		strat := &model.GetMessageByRoom { RoomId: uint32(roomIdInt)}
+		strat := &model.GetMessageByRoom { RoomId: uint32(roomIdInt), Time: time.Now() }
 		messages, err := messageStore.GetMessage(ctx, strat)
-		if err != nil { http.Error(w, "cannot get message by room", 500); return }
+		if err != nil { 
+			fmt.Println(err)
+			http.Error(w, "cannot get message by room", 500); return }
 
 		json, err := json.Marshal(messages)
 		if err != nil { http.Error(w, "cant convert json", 500); return }
@@ -169,13 +181,40 @@ func getRoomMessages(ctx context.Context, messageStore model.MessageStore) http.
 	}
 }
 
-type RoomRequestData struct {
-	DataType string `json:"dataType"`
-	Data struct {
-		Content string `json:"content"`
-		Rid string `json:"rid"`
-		Uid string `json:"uid"`
-	} `json:"data"`
+func getOldMessages(ctx context.Context, messageStore model.MessageStore) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		roomIdStr := r.PathValue("id")
+		roomIdInt, err := strconv.ParseInt(roomIdStr, 10, 16)
+		if err != nil { http.Error(w, "cant parse int", 500); return }
+
+		body := r.Body
+		defer body.Close()
+
+		data, err := io.ReadAll(body)
+		if err != nil { http.Error(w, "cant read body", 500); return }
+
+		var dataJson struct { Time string `json:"time"` }
+		err = json.Unmarshal(data, &dataJson)
+		if err != nil { http.Error(w, "cant unmarshal data", 500); return }
+		ts, err := strconv.ParseInt(dataJson.Time, 10, 64)
+		if err != nil { http.Error(w, "invalid time" , 500); return }
+		if ts > 1e12 {
+			ts = ts/1000
+		}
+
+		strat := &model.GetMessageByRoom { RoomId: uint32(roomIdInt), Time: time.Unix(ts, 0).UTC() }
+		messages, err := messageStore.GetMessage(ctx, strat)
+		if err != nil {
+			fmt.Println(err)
+			http.Error(w, "failed to get message", 500)
+			return
+		}
+
+		json, err := json.Marshal(messages)
+		if err != nil { http.Error(w, "cant convert json", 500); return }
+
+		fmt.Fprintf(w, "%s", json)
+	}
 }
 
 func putRoom(ctx context.Context, s *Stores) http.HandlerFunc {

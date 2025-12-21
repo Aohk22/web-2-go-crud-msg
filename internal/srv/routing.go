@@ -18,6 +18,8 @@ func addRoutes(ctx context.Context, mux *http.ServeMux, stor *Stores) {
 	mux.Handle("GET /room/{id}/users", getRoomUsers(ctx, stor.UserStore))
 	mux.Handle("GET /room/{id}/messages", getRoomMessages(ctx, stor.MessageStore))
 
+	mux.Handle("POST /room/{id}/messages", getOldMessages(ctx, stor.MessageStore))
+
 	mux.Handle("PUT /room/{id}", putRoom(ctx, stor))
 }
 

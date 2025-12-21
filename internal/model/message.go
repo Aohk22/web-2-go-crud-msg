@@ -42,6 +42,7 @@ type GetMessageByUser struct {
 
 type GetMessageByRoom struct {
 	RoomId uint32
+	Time time.Time
 }
 
 func (strat *GetMessageByRoomUser) MakeQuery() (string, []any) {
@@ -53,7 +54,15 @@ func (strat *GetMessageByUser) MakeQuery() (string, []any) {
 }
 
 func (strat *GetMessageByRoom) MakeQuery() (string, []any) {
-	return "select * from messages where room_id = $1", []any{strat.RoomId}
+	query :=
+		`select *
+		from messages
+		where room_id = $1
+		and time < $2
+		order by time desc
+		limit 5`
+		
+	return query, []any{strat.RoomId, strat.Time}
 }
 
 func (store *PgMessageStore) GetMessage(ctx context.Context, msgStrat GetMessageStrategy) ([]Message, error) {

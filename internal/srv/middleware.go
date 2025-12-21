@@ -7,7 +7,6 @@ import (
 	"strings"
 )
 
-
 func loggerMiddleware(logger *log.Logger, next http.Handler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		logger.Printf("%v %v\n", r.Method, r.URL)
@@ -15,7 +14,6 @@ func loggerMiddleware(logger *log.Logger, next http.Handler) http.HandlerFunc {
 		next.ServeHTTP(w, r)
 	}
 }
-
 
 func authMiddleware(next http.Handler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
