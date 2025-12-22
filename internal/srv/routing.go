@@ -21,5 +21,7 @@ func addRoutes(ctx context.Context, mux *http.ServeMux, stor *Stores) {
 	mux.Handle("POST /room/{id}/messages", getOldMessages(ctx, stor.MessageStore))
 
 	mux.Handle("PUT /room/{id}", putRoom(ctx, stor))
+
+	mux.Handle("/ws", handleWebSocket(ctx))
 }
 
