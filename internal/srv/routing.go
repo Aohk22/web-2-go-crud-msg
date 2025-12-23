@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-func addRoutes(ctx context.Context, mux *http.ServeMux, stor *Stores) {
+func addRoutes(ctx context.Context, mux *http.ServeMux, stor *Stores, hub *Hub) {
 	mux.Handle("POST /register", register(ctx, stor.UserStore))
 	mux.Handle("POST /login", login(ctx, stor.UserStore))
 
@@ -22,6 +22,6 @@ func addRoutes(ctx context.Context, mux *http.ServeMux, stor *Stores) {
 
 	mux.Handle("PUT /room/{id}", putRoom(ctx, stor))
 
-	mux.Handle("/ws", handleWebSocket(ctx))
+	mux.Handle("/ws", handleWebSocket(ctx, hub))
 }
 

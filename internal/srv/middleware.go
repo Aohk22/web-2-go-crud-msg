@@ -19,9 +19,17 @@ func authMiddleware(next http.Handler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/login" {
 			cookie := r.Header.Get("Authorization")
-			if len(cookie) == 0 { http.Error(w, "need jwt auth header", 401); return }
+			if len(cookie) == 0 { 
+				log.Println("need jwt auth header")
+				http.Error(w, "need jwt auth header", 401)
+				return 
+			}
 			tokens := strings.Split(cookie, " ")
-			if len(tokens) < 2 { http.Error(w, "token parse error", 500); return }
+			if len(tokens) < 2 {
+				log.Println("token parse error")
+				http.Error(w, "token parse error", 500)
+				return 
+			}
 			token := tokens[1]
 
 			_, err := verifyToken(token)
