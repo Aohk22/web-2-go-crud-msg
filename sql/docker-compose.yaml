@@ -1,0 +1,13 @@
+services:
+  postgres:
+    image: postgres
+    restart: always
+    shm_size: 128mb
+    environment:
+      POSTGRES_PASSWORD: 1230984576
+      POSTGRES_USER: tkl
+      POSTGRES_DB: msgapp
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./docker-entrypoint-initdb.d/:/docker-entrypoint-initdb.d
