@@ -1,6 +1,7 @@
 import z from 'zod';
-import { checkLogin } from '../lib/utils.ts'
+import { checkLogin } from '../lib/utils.ts';
 import { Navigate, useNavigate } from 'react-router';
+import './styles/Login.css';
 
 const FormInput = z.object({
 	username: z.string(),
