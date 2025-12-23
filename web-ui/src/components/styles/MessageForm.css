@@ -1,0 +1,13 @@
+.messageForm {
+	display: flex;
+	width: 100%;
+	max-width: 100%;
+	justify-content: center;
+	align-items: center;
+	margin-bottom: 1rem;
+	textarea {
+		resize: none;
+		max-height: 200px;
+		min-width: 50%;
+	}
+}

@@ -1,0 +1,12 @@
+.homeHead {
+	display: flex;
+	width: 100%;
+	flex-direction: column;
+	align-items: center;
+	sub {
+		width: 100%;
+		text-align: right;
+		padding-right: 10px;
+	}
+}
+
