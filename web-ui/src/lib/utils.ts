@@ -57,6 +57,23 @@ export async function fetchRoomUsers<User>(id: string): Promise<User[]> {
 	}).catch((err) => { console.log(err) })
 }
 
+export async function fetchOldMessages<Message>(rid: string, time: string): Promise<Message[]> {
+	'use server';
+	const jawtToken = localStorage.getItem('jwtToken');
+	return fetch(`${API}/room/${rid}/messages`, {
+		method: 'POST',
+		headers: { 'Authorization': `Bearer ${jawtToken}` },
+		body: JSON.stringify({ 'time': time })
+	}).then((res) => {
+		if (!res.ok) {
+			throw new Error('fetch old message not ok');
+		}
+		return res.json();
+	}).then((json) => {
+		return json
+	}).catch((err) => { console.log(err) })
+}
+
 export function getUserId(): string {
 	const token = localStorage.getItem('jwtToken');
 	if (token === null) {
@@ -70,4 +87,19 @@ export function getUserId(): string {
 		console.log('getUserId(): could not parse jawt token');
 		return "";
 	}
+}
+
+export async function roomExists(id: string): Promise<boolean> {
+	try {
+        const res = await fetch(`${API}/room/${id}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`,
+            },
+        });
+        return res.ok;
+    } catch (err) {
+        console.log(err);
+        return false;
+    }
 }
