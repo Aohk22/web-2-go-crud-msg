@@ -2,9 +2,12 @@ package srv
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
+	"time"
 
 	"github.com/gorilla/websocket"
 )
@@ -20,6 +23,7 @@ type Hub struct {
 	reg chan *Client
 	unreg chan *Client
 	broadcast chan []byte
+	stores *Stores
 }
 
 func (c *Client) listenAndWriteToHub() {
@@ -27,10 +31,11 @@ func (c *Client) listenAndWriteToHub() {
 		c.hub.unreg <- c
 		c.conn.Close()
 	}()
-	// not set read deadline yet
+	// TODO: not set read deadline yet
 	for {
 		_, message, err := c.conn.ReadMessage()
 		if err != nil {
+			log.Printf("%v\n", err)
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
 				log.Printf("error: %v", err)
 			}
@@ -88,7 +93,34 @@ func (h *Hub) run() {
 				close(client.send)
 			}
 		case message := <-h.broadcast:
-			log.Println("got message from client, broadcasting")
+			log.Println("got message from client, broadcasting and saving messeage to database")
+			d := struct { Time, Content, UserId, RoomId string}{}
+			err := json.Unmarshal(message, &d)
+			if err != nil {
+				log.Println("socket: failed to unmarshal message")
+				log.Println(err)
+				return
+			}
+			log.Println(d)
+			log.Println(d.Time)
+			i, err := strconv.ParseInt(d.Time, 10, 64)
+			if err != nil {
+				log.Println("socket: failed to parse int time")
+				return
+			}
+			tm := time.Unix(i, 0).UTC().Format("2006-01-02 15:04:05-07") // 0 nsec
+			uidInt, err := strconv.ParseInt(d.UserId, 10, 32)
+			ridInt, err := strconv.ParseInt(d.RoomId, 10, 32)
+			if err != nil { 
+				log.Println("socket: failed to parse ids")
+				log.Println(err)
+			}
+			_, err = h.stores.MessageStore.AddMessage(context.Background(), tm, d.Content, uint32(uidInt), uint32(ridInt)) // TODO potential bug here
+			if err != nil {
+				log.Println("socket: failed to save to database therefore not putting to echoing to clients")
+				log.Println(err)
+				return
+			}
 			for c := range h.clients {
 				select {
 				case c.send <- message:
@@ -101,16 +133,23 @@ func (h *Hub) run() {
 	}
 }
 
-func NewHub() (*Hub) {
+func NewHub(stores *Stores) (*Hub) {
 	return &Hub{
 		clients: make(map[*Client]bool),
 		reg: make(chan *Client),
 		unreg: make(chan *Client),
 		broadcast: make(chan []byte),
+		stores: stores,
 	}
 }
 
-var upgrader = websocket.Upgrader{}
+// TODO: FIX THIs
+var upgrader = websocket.Upgrader{
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
+	Subprotocols: []string{"wamp"}, // for token smuggling, not really needed now
+}
 
 func handleWebSocket(ctx context.Context, hub *Hub) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -130,18 +169,3 @@ func handleWebSocket(ctx context.Context, hub *Hub) http.HandlerFunc {
 		go client.listenForHubBroadcast()
 	}
 }
-
-		// defer c.Close()
-		// for {
-		// 	mt, message, err := c.ReadMessage()
-		// 	if err != nil {
-		// 		fmt.Println("read:", err)
-		// 		break
-		// 	}
-		// 	fmt.Println("recv:", message)
-		// 	err = c.WriteMessage(mt, message)
-		// 	if err != nil {
-		// 		fmt.Println("write:", message)
-		// 		break
-		// 	}
-		// }

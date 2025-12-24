@@ -17,7 +17,7 @@ func loggerMiddleware(logger *log.Logger, next http.Handler) http.HandlerFunc {
 
 func authMiddleware(next http.Handler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path != "/login" {
+		if r.URL.Path != "/login" && r.Header.Get("Upgrade") != "websocket" {
 			cookie := r.Header.Get("Authorization")
 			if len(cookie) == 0 { 
 				log.Println("need jwt auth header")
@@ -48,7 +48,7 @@ func authMiddleware(next http.Handler) http.HandlerFunc {
 
 func corsMiddleware(next http.Handler) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Add("Access-Control-Allow-Origin", "http://localhost:5173")
+		w.Header().Add("Access-Control-Allow-Origin", "http://web.lububu.lan:5173")
 		w.Header().Add("Access-Control-Allow-Credentials", "true")
 		w.Header().Add("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
 		w.Header().Add("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")

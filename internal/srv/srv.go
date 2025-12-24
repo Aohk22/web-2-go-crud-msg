@@ -38,7 +38,7 @@ func NewServer(ctx context.Context, logger *log.Logger, db *pgxpool.Pool) (http.
 	if !exist { return nil, errors.New("Env JWT_KEY not set.") }
 
 	stores := NewStores(db)
-	hub := NewHub()
+	hub := NewHub(stores)
 	go hub.run()
 
 	addRoutes(ctx, mux, stores, hub)
