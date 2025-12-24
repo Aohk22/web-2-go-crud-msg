@@ -1,54 +1,59 @@
 import { getUserId } from '../lib/utils'
+import './styles/MessageForm.css'
 
-const API = import.meta.env.VITE_API_URL;
+// auto expand text area
+document.querySelectorAll("textarea").forEach(function(textarea) {
+	textarea.style.height = textarea.scrollHeight + "px"
+	textarea.style.overflowY = "hidden"
+
+	textarea.addEventListener("input", function() {
+		this.style.height = "auto"
+		this.style.height = this.scrollHeight + "px"
+	})
+})
 
 export default function MessageForm(
 	{ 
-		roomId, onSent
+		roomId, send
 	} : {
 		roomId: string,
-		onSent: Function,
+		send: Function,
 	}
 ) {
-	const userId = getUserId();
+	const userId = getUserId()
 
-	function handleKey(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+	function handleFormKeyPress(e: React.KeyboardEvent<HTMLTextAreaElement>) {
 		if (e.key === 'Enter' && !e.shiftKey) {
 			if (e.currentTarget.value.trim().length > 0) {
-				e.currentTarget.form?.requestSubmit();
+				const form = e.currentTarget.form
+				if (!form) {
+					console.log('current target not a form')
+				} else {
+					form.requestSubmit()
+				}
 			}
-			e.preventDefault();
+			e.preventDefault()
 		}
 	}
 
 	async function sendMessage(formData: FormData) {
-		'use server';
+		if (typeof formData.get('content') != 'string') {
+			console.log('message form has wrong type')
+			return
+		}
+		if (formData.get('content').trim().length <= 0) {
+			console.log('content cannot be empty')
+			return
+		}
 
-		formData.append('uid', userId);
-		formData.append('rid', roomId);
-
-		const fullForm = {'dataType': 'message', 'data': Object.fromEntries(formData.entries())}
-		const jawt = localStorage.getItem('jwtToken');
-
-		fetch(`${API}/room/${roomId}`, {
-			method: 'PUT',
-			headers: {
-				'Authorization': `Bearer ${jawt}`,
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(fullForm)
-		})
-		.then(() => {
-			document.getElementById('messageForm')?.reset();
-		})
-		.then(() => {
-			onSent();
-		})
-		.catch((err) => console.log(err))
+		formData.append('userId', userId)
+		formData.append('roomId', roomId)
+		formData.append('time', `${Math.ceil(Date.now()/1000)}`)
+		const json = JSON.stringify(Object.fromEntries(formData.entries()))
+		send(json)
 	}
 
 	return (
-		<>
 		<form 
 			id='messageForm'
 			className='messageForm'
@@ -57,13 +62,12 @@ export default function MessageForm(
 			<textarea 
 				id='messageFormContent'
 				className='messageFormContent'
-				onKeyDown={handleKey}
+				onKeyDown={handleFormKeyPress}
 				form='messageForm'
 				name='content'
 			>
 			</textarea>
 			<button id='messageFormSubmit' type='submit'>send</button>
 		</form>
-		</>
 	)
 }
