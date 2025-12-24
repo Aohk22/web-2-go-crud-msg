@@ -1,4 +1,5 @@
 import type { User } from "../types/schemas";
+import './styles/RoomUsers.css'
 
 export default function RoomUsers(
 	{ 
@@ -8,12 +9,12 @@ export default function RoomUsers(
 	}
 ) {
 	const userList = users.map((user) => {
-		return <li key={user.Id}>{user.Name}</li>
+		return <p key={user.Id}>{user.Name}</p>
 	});
 
 	return (
-		<ul>
+		<div className='userList'>
 		{userList}
-		</ul>
+		</div>
 	);
 }
