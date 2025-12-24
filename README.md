@@ -50,6 +50,7 @@
 - 17/12: Practice useEffect.
 - ~20/12: still improving ui, adding functions, restructuring code.
 - 21/12: failed to implement message update, need to look into **websockets** for real time update.
+- ~23/12: done half websocket implementation (go server), need authentication over websockets which seems troublesome. Might switch to pubsub later. Current solution is smuggling auth tokens over protocol.
 
 **Resource:**
 
@@ -59,9 +60,15 @@
 - https://www.alexedwards.net/blog/making-and-using-middleware (\*)
 - https://grafana.com/blog/2024/02/09/how-i-write-http-services-in-go-after-13-years/#the-newserver-constructor (\*)
 
+
 - https://www.jetbrains.com/guide/go/tutorials/authentication-for-go-apps/auth/
 - https://github.com/golang-jwt/jwt
 - https://permify.co/post/jwt-authentication-go/ (\*)
 
+
 - https://stackoverflow.com/questions/35553500/xmlhttprequest-cannot-load-xxx-no-access-control-allow-origin-header (\*)
 - https://www.descope.com/blog/post/developer-guide-jwt-storage
+
+
+- https://stackoverflow.com/a/77060459/31690738
+- https://jsmanifest.com/the-publish-subscribe-pattern-in-javascript/ (future reading)

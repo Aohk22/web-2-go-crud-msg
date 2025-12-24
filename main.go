@@ -57,7 +57,7 @@ func run(ctx context.Context, logger *log.Logger) error {
 
 func main() {
 	ctx := context.Background()
-	logger := log.New(os.Stdout, "MyLogger: ", log.Ldate)
+	logger := log.New(os.Stdout, "request: ", log.Ltime)
 
 	err := run(ctx, logger)
 	if err != nil { logger.Println(err) }
