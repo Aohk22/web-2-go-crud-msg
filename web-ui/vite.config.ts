@@ -9,5 +9,8 @@ export default defineConfig({
 			src: '/src',
 		},
 	},
+	server: {
+		allowedHosts: ['web.lububu.lan']
+	}
 })
 
